@@ -83,6 +83,18 @@ func splitCSV(inputPath, outputPrefix string, maxRecords int) error {
 			return fmt.Errorf("error reading record: %w", err)
 		}
 
+		// Skip empty record (e.g. empty newline at EOF)
+		isEmpty := true
+		for _, field := range record {
+			if field != "" {
+				isEmpty = false
+				break
+			}
+		}
+		if isEmpty {
+			continue
+		}
+
 		if recordCount >= maxRecords {
 			if err := createNewFile(); err != nil {
 				return err
